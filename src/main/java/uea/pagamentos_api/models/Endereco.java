@@ -3,11 +3,16 @@ package uea.pagamentos_api.models;
 import java.io.Serializable;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Embeddable
 public class Endereco implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
+	@NotBlank(message = "Logradouro é obrigatório")
+	@Size(min=5, max=30, message = "Logradouro deve ter"
+			+ " tamnho entre 5 e 30")
 	private String logradouro;
 	private String numero;
 	private String complemento;

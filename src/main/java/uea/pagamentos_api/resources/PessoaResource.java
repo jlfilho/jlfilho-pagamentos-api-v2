@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import jakarta.validation.Valid;
 import uea.pagamentos_api.models.Pessoa;
 import uea.pagamentos_api.services.PessoaService;
 
@@ -27,7 +27,7 @@ public class PessoaResource {
 	private PessoaService pessoaService;
 
 	@PostMapping
-	public ResponseEntity<Pessoa> criar(@RequestBody Pessoa pessoa) {
+	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa) {
 		Pessoa pessoaSalva = pessoaService.criar(pessoa);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{codigo}")
@@ -55,7 +55,7 @@ public class PessoaResource {
 	}
 
 	@PutMapping(value = "/{codigo}")
-	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @RequestBody Pessoa pessoa) {
+	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
 		Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
 		return ResponseEntity.ok().body(pessoaSalva);
 
