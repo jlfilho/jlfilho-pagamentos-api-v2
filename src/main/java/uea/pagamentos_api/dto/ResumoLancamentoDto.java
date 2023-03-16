@@ -14,6 +14,7 @@ public class ResumoLancamentoDto {
 	private TipoLancamento tipo;
 	private String categoria;
 	private String pessoa;
+	
 
 	public ResumoLancamentoDto() {
 		super();
