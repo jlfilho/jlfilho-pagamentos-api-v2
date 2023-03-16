@@ -66,6 +66,10 @@ public class Pessoa implements Serializable {
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
+	
+	public Boolean isAtivo() {
+		return this.ativo;
+	}
 
 	public Endereco getEndereco() {
 		return endereco;

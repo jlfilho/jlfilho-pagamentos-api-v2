@@ -12,6 +12,7 @@ import uea.pagamentos_api.models.Pessoa;
 import uea.pagamentos_api.repositories.CategoriaRepository;
 import uea.pagamentos_api.repositories.LancamentoRepository;
 import uea.pagamentos_api.repositories.PessoaRepository;
+import uea.pagamentos_api.services.exceptions.PessoaInativaException;
 
 @Service
 public class LancamentoService {
@@ -28,6 +29,9 @@ public class LancamentoService {
 	public Lancamento criar(Lancamento lancamento) {
 		Pessoa pessoa = pessoaRepository.findById(
 				lancamento.getPessoa().getCodigo()).orElseThrow();
+		if(!pessoa.isAtivo()) {
+			throw new PessoaInativaException();
+		}
 		Categoria categoria = categoriaRepository.findById(
 				lancamento.getCategoria().getCodigo()).orElseThrow();
 		return lancamentoRepository.save(lancamento);
@@ -47,10 +51,17 @@ public class LancamentoService {
 	}
 	
 	public Lancamento atualizar(Long codigo, Lancamento lancamento) {
-		Lancamento lancamentoSalva = lancamentoRepository.
+		Lancamento lancamentoSalvo = lancamentoRepository.
 				findById(codigo).orElseThrow();
-		BeanUtils.copyProperties(lancamento, lancamentoSalva, "codigo");
-		return lancamentoRepository.save(lancamentoSalva);
+		Pessoa pessoa = pessoaRepository.findById(
+				lancamento.getPessoa().getCodigo()).orElseThrow();
+		if(!pessoa.isAtivo()) {
+			throw new PessoaInativaException();
+		}
+		Categoria categoria = categoriaRepository.findById(
+				lancamento.getCategoria().getCodigo()).orElseThrow();
+		BeanUtils.copyProperties(lancamento, lancamentoSalvo, "codigo");
+		return lancamentoRepository.save(lancamentoSalvo);
 	}
 	
 

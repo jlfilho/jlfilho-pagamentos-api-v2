@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import uea.pagamentos_api.services.exceptions.PessoaInativaException;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
@@ -42,6 +43,20 @@ public class ResourceExceptionHandler {
 		List<String> erros = Arrays
 				.asList(messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale()));
 		HttpStatus status = HttpStatus.NOT_FOUND;
+
+		StandardError err = new StandardError(Instant.now(), status.value(), erros, e.getMessage(),
+				request.getRequestURI());
+
+		return ResponseEntity.status(status).body(err);
+	}
+	
+	@ExceptionHandler(PessoaInativaException.class)
+	public ResponseEntity<StandardError> pessoaInativaException(PessoaInativaException e,
+			HttpServletRequest request) {
+
+		List<String> erros = Arrays
+				.asList(messageSource.getMessage("mensagem.pessoa.inativa", null, LocaleContextHolder.getLocale()));
+		HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 
 		StandardError err = new StandardError(Instant.now(), status.value(), erros, e.getMessage(),
 				request.getRequestURI());

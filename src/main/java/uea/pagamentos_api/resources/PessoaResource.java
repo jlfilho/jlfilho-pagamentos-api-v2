@@ -53,6 +53,14 @@ public class PessoaResource {
 		pessoaService.excluir(codigo);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@PutMapping(value="/{codigo}/ativo")
+	public ResponseEntity<Pessoa> atualizarPropriedadeAtivo(
+			@PathVariable Long codigo, @RequestBody Boolean ativo){
+		Pessoa pessoaSalva = pessoaService.
+				atualizarPropriedadeAtivo(codigo, ativo);
+		return ResponseEntity.ok(pessoaSalva);
+	}
 
 	@PutMapping(value = "/{codigo}")
 	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
