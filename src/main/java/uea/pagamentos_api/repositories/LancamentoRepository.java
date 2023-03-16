@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import uea.pagamentos_api.models.Lancamento;
+import uea.pagamentos_api.repositories.lanmento.LancamentoRepositoryQuery;
 
 @Repository
-public interface LancamentoRepository  extends JpaRepository<Lancamento, Long> {
+public interface LancamentoRepository extends 
+	JpaRepository<Lancamento, Long>, LancamentoRepositoryQuery {
 
 }
