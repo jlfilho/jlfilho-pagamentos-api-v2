@@ -3,10 +3,14 @@ package uea.pagamentos_api.repositories.lanmento;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.ObjectUtils;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -22,7 +26,7 @@ implements LancamentoRepositoryQuery{
 	private EntityManager manager;
 
 	@Override
-	public List<ResumoLancamentoDto> filtrar(LancamentoFilter lancamentoFilter) {
+	public Page<ResumoLancamentoDto> filtrar(LancamentoFilter lancamentoFilter, Pageable pageable) {
 		CriteriaBuilder builder = manager.getCriteriaBuilder();
 		
 		CriteriaQuery<ResumoLancamentoDto> criteria = builder.createQuery(ResumoLancamentoDto.class);
@@ -37,11 +41,37 @@ implements LancamentoRepositoryQuery{
 			criteria.where(predicates);
 		}
 		
-		List<ResumoLancamentoDto> returnList = manager.createQuery(criteria).getResultList();
+		TypedQuery<ResumoLancamentoDto> query = manager.createQuery(criteria);
 		
-		return returnList;
+		adicionarRestricoesDePaginacao(query, pageable);
+		
+		return new PageImpl<>(query.getResultList(), pageable,
+				total(lancamentoFilter));
 	}
 	
+	private Long total(LancamentoFilter lancamentoFilter) {
+		CriteriaBuilder builder = manager.getCriteriaBuilder();
+		CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+		Root<Lancamento> root = criteria.from(Lancamento.class);
+
+		Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
+		if (predicates.length > 0) {
+			criteria.where(predicates);
+		}
+
+		criteria.select(builder.count(root));
+		return manager.createQuery(criteria).getSingleResult();
+	}
+
+	private void adicionarRestricoesDePaginacao(TypedQuery<ResumoLancamentoDto> query, Pageable pageable) {
+		int paginaAtual = pageable.getPageNumber();
+		int totalDeRegistroPorPagina = pageable.getPageSize();
+		int primeiroRegistroDaPagina = paginaAtual * totalDeRegistroPorPagina;
+		
+		query.setFirstResult(primeiroRegistroDaPagina);
+		query.setMaxResults(totalDeRegistroPorPagina);
+	}
+
 	private Predicate[] criarRestricoes(LancamentoFilter lancamentoFilter, CriteriaBuilder builder,
 			Root<Lancamento> root) {
 		List<Predicate> predicates = new ArrayList<>();
