@@ -72,6 +72,14 @@ public class Usuario {
 		this.senha = senha;
 	}
 
+	public Set<Permissao> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(Set<Permissao> permissoes) {
+		this.permissoes = permissoes;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(codigo);
