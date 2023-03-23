@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import uea.pagamentos_api.models.Usuario;
@@ -14,8 +15,10 @@ public class UsuarioService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(); 
 	
 	public Usuario criar(Usuario usuario) {
+		usuario.setSenha("{bcrypt}"+encoder.encode(usuario.getSenha())); 
 		return usuarioRepository.save(usuario);
 	}
 	
@@ -35,7 +38,13 @@ public class UsuarioService {
 	public Usuario atualizar(Long codigo, Usuario usuario) {
 		Usuario usuarioSalva = usuarioRepository.
 				findById(codigo).orElseThrow();
-		BeanUtils.copyProperties(usuario, usuarioSalva, "codigo");
+		if(usuario.getSenha()!=null) {
+			usuario.setSenha("{bcrypt}"+encoder.encode(usuario.getSenha()));
+			BeanUtils.copyProperties(usuario, usuarioSalva, "codigo");
+			return usuarioRepository.save(usuarioSalva);
+		}
+		BeanUtils.copyProperties(usuario, usuarioSalva, new String[] 
+				{"senha", "codigo"});
 		return usuarioRepository.save(usuarioSalva);
 	}
 	
