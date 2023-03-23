@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ public class LancamentoResource {
 	
 
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO') and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento) {
 		Lancamento lancamentoSalva = lancamentoService.criar(lancamento);
 
@@ -42,6 +44,7 @@ public class LancamentoResource {
 	}
 
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')" )
 	public ResponseEntity<Page<ResumoLancamentoDto>> resumir(LancamentoFilter lancamentoFilter,
 			Pageable pageable) {
 		Page<ResumoLancamentoDto> resumos = lancamentoService.resumir(lancamentoFilter, pageable);
@@ -49,18 +52,21 @@ public class LancamentoResource {
 	}
 
 	@GetMapping(value = "/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO') and hasAuthority('SCOPE_read')" )
 	public ResponseEntity<Lancamento> buscarPorCodigo(@PathVariable Long codigo) {
 		Lancamento lancamento = lancamentoService.buscarPorCodigo(codigo);
 		return ResponseEntity.ok().body(lancamento);
 	}
 
 	@DeleteMapping(value = "/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO') and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Void> excluir(@PathVariable Long codigo) {
 		lancamentoService.excluir(codigo);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PutMapping(value = "/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_ATUALIZAR_LANCAMENTO') and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Lancamento> atualizar(@PathVariable Long codigo, @Valid @RequestBody Lancamento lancamento) {
 		Lancamento lancamentoSalva = lancamentoService.atualizar(codigo, lancamento);
 		return ResponseEntity.ok().body(lancamentoSalva);

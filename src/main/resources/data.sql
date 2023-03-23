@@ -21,9 +21,14 @@ INSERT INTO permissao (descricao) values ('ROLE_PESQUISAR_USUARIO');
 INSERT INTO permissao (descricao) values ('ROLE_ATUALIZAR_USUARIO');
 INSERT INTO permissao (descricao) values ('ROLE_REMOVER_USUARIO');
 
+INSERT INTO permissao (descricao) values ('ROLE_CADASTRAR_PERMISSAO');
+INSERT INTO permissao (descricao) values ('ROLE_PESQUISAR_PERMISSAO');
+INSERT INTO permissao (descricao) values ('ROLE_ATUALIZAR_PERMISSAO');
+INSERT INTO permissao (descricao) values ('ROLE_REMOVER_PERMISSAO');
+
 INSERT INTO usuario_permissao (codigo_usuario,codigo_permissao) values (1, 1), (1, 2),
 (1, 3), (1, 4),(1, 5), (1, 6),(1, 7), (1, 8),(1, 9), (1, 10),(1, 11), (1, 12), (1, 13), 
-(1, 14),(1, 15), (1, 16);
+(1, 14),(1, 15), (1, 16), (1, 17), (1, 18), (1, 19), (1, 20);
 
 INSERT INTO usuario_permissao (codigo_usuario,codigo_permissao) values (2, 2), (2, 6), (2, 10);
 
