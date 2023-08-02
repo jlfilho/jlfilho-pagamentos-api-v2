@@ -1,4 +1,4 @@
-package uea.pagamentos_api.repositories.lanmento;
+package uea.pagamentos_api.repositories.lancamento;
 
 import java.util.ArrayList;
 import java.util.List;

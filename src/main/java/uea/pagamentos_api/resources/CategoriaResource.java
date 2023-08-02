@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ public class CategoriaResource {
 	private CategoriaService categoriaService;
 	
 	@PostMapping
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA')")
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria) {
 		Categoria categoriaSalva = categoriaService.criar(categoria);
 		
@@ -38,12 +40,14 @@ public class CategoriaResource {
 	}
 	
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')" )
 	public ResponseEntity<List<Categoria>> listar() {
 		List<Categoria> categorias = categoriaService.listar();
 		return ResponseEntity.ok().body(categorias);
 	}
 	
 	@GetMapping(value = "/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')" )
 	public ResponseEntity<Categoria> buscarPorCodigo(@PathVariable 
 			Long codigo){
 		Categoria categoria = categoriaService.buscarPorCodigo(codigo);
@@ -51,12 +55,14 @@ public class CategoriaResource {
 	}
 	
 	@DeleteMapping(value="/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_CATEGORIA')")
 	public ResponseEntity<Void> excluir(@PathVariable Long codigo){
 		categoriaService.excluir(codigo);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping(value="/{codigo}")
+	@PreAuthorize("hasAuthority('ROLE_ATUALIZAR_CATEGORIA')")
 	public ResponseEntity<Categoria> atualizar(@PathVariable Long codigo,
 			@Valid @RequestBody Categoria categoria){
 		Categoria categoriaSalva = categoriaService.atualizar(codigo,
@@ -64,7 +70,4 @@ public class CategoriaResource {
 		return ResponseEntity.ok().body(categoriaSalva);
 		
 	}
-	
-	
-	
 }

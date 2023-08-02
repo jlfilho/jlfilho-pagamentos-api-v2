@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,5 +64,20 @@ public class ResourceExceptionHandler {
 
 		return ResponseEntity.status(status).body(err);
 	}
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<StandardError> dataIntegrityViolationException(DataIntegrityViolationException e,
+			HttpServletRequest request) {
+
+		List<String> erros = Arrays
+				.asList(messageSource.getMessage("mensagem.exclusao.dependente", null, LocaleContextHolder.getLocale()));
+		HttpStatus status = HttpStatus.FAILED_DEPENDENCY;
+
+		StandardError err = new StandardError(Instant.now(), status.value(), erros, e.getMessage(),
+				request.getRequestURI());
+
+		return ResponseEntity.status(status).body(err);
+	}
+	
 
 }

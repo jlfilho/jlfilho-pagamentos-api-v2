@@ -34,6 +34,10 @@ public class Pessoa implements Serializable {
 	public Pessoa() {
 
 	}
+	
+	public Pessoa(Long codigo) {
+		this.codigo = codigo;
+	}
 
 	public Pessoa(Long codigo, String nome, Boolean ativo, Endereco endereco) {
 		super();
