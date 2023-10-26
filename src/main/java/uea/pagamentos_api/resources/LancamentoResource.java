@@ -57,7 +57,7 @@ public class LancamentoResource {
 	}
 
 	@DeleteMapping(value = "/{codigo}")
-	@PreAuthorize("hasRole('ROLE_REMOVER_LANCAMENTO')")
+	@PreAuthorize("hasRole('ROLE_REMOVER_LANCAMENTO') and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Void> excluir(@PathVariable Long codigo) {
 		lancamentoService.excluir(codigo);
 		return ResponseEntity.noContent().build();

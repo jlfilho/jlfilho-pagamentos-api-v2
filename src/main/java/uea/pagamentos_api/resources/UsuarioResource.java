@@ -18,6 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
 import uea.pagamentos_api.models.Usuario;
+import uea.pagamentos_api.security.UserDetailsServiceImpl;
 import uea.pagamentos_api.services.UsuarioService;
 
 @RestController

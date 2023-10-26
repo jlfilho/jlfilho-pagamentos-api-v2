@@ -1,6 +1,7 @@
 package uea.pagamentos_api.config.authserver;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -33,6 +31,9 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -45,10 +46,23 @@ import uea.pagamentos_api.config.authserver.jose.Jwks;
 @Profile("oauth-security")
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
-	
+
 	@Autowired
 	private PagamentosApiProperty pagamentosApiProperty;
-	
+
+	@Bean
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(pagamentosApiProperty.getOriginPermitida());
+		// Arrays.asList("*") 
+		configuration.setAllowedMethods(Arrays.asList("POST, GET, DELETE, PUT, OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization, Content-Type, Accept"));
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -78,15 +92,15 @@ public class AuthorizationServerConfig {
 				.scope("read")
 				.scope("write")
 				.tokenSettings(TokenSettings.builder()
-                        .accessTokenTimeToLive(Duration.ofMinutes(5))
-                        .refreshTokenTimeToLive(Duration.ofDays(1))
+                        .accessTokenTimeToLive(Duration.ofMinutes(30))
+                        .refreshTokenTimeToLive(Duration.ofDays(24))
                         .build())
 				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
 				.build();
 
 		// Save registered client in db as if in-memory
 		JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
-		registeredClientRepository.save(registeredClient);
+		//registeredClientRepository.save(registeredClient);
 
 		return registeredClientRepository;
 	}
@@ -118,10 +132,11 @@ public class AuthorizationServerConfig {
 
 	@Bean
 	public AuthorizationServerSettings authorizationServerSettings() {
-		return AuthorizationServerSettings.builder().issuer(pagamentosApiProperty.getSeguranca().getAuthServerUrl()).build();
+		return AuthorizationServerSettings.builder().issuer(pagamentosApiProperty.getSeguranca().getAuthServerUrl())
+				.build();
 	}
 
-	@Bean
+	/*@Bean
 	public EmbeddedDatabase embeddedDatabase() {
 		// @formatter:off
 		return new EmbeddedDatabaseBuilder()
@@ -133,7 +148,6 @@ public class AuthorizationServerConfig {
 				.addScript("org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql")
 				.build();
 		// @formatter:on
-	}
+	}*/
 
 }
-

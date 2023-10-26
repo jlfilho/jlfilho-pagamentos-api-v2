@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "pagamentosapi")
 public class PagamentosApiProperty {
-
-	private String originPermitida;
+	private List<String> originPermitida;
 
 	private final Seguranca seguranca = new Seguranca();
 
@@ -17,11 +16,11 @@ public class PagamentosApiProperty {
 		return seguranca;
 	}
 
-	public String getOriginPermitida() {
+	public List<String> getOriginPermitida() {
 		return originPermitida;
 	}
 
-	public void setOriginPermitida(String originPermitida) {
+	public void setOriginPermitida(List<String> originPermitida) {
 		this.originPermitida = originPermitida;
 	}
 

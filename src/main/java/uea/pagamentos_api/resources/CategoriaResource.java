@@ -28,7 +28,7 @@ public class CategoriaResource {
 	private CategoriaService categoriaService;
 	
 	@PostMapping
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA')")
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA') and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria) {
 		Categoria categoriaSalva = categoriaService.criar(categoria);
 		
@@ -40,14 +40,14 @@ public class CategoriaResource {
 	}
 	
 	@GetMapping
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')" )
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and hasAuthority('SCOPE_read')" )
 	public ResponseEntity<List<Categoria>> listar() {
 		List<Categoria> categorias = categoriaService.listar();
 		return ResponseEntity.ok().body(categorias);
 	}
 	
 	@GetMapping(value = "/{codigo}")
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')" )
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA') and hasAuthority('SCOPE_read')" )
 	public ResponseEntity<Categoria> buscarPorCodigo(@PathVariable 
 			Long codigo){
 		Categoria categoria = categoriaService.buscarPorCodigo(codigo);
@@ -55,14 +55,14 @@ public class CategoriaResource {
 	}
 	
 	@DeleteMapping(value="/{codigo}")
-	@PreAuthorize("hasAuthority('ROLE_REMOVER_CATEGORIA')")
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_CATEGORIA')and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Void> excluir(@PathVariable Long codigo){
 		categoriaService.excluir(codigo);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@PutMapping(value="/{codigo}")
-	@PreAuthorize("hasAuthority('ROLE_ATUALIZAR_CATEGORIA')")
+	@PreAuthorize("hasAuthority('ROLE_ATUALIZAR_CATEGORIA') and hasAuthority('SCOPE_write')")
 	public ResponseEntity<Categoria> atualizar(@PathVariable Long codigo,
 			@Valid @RequestBody Categoria categoria){
 		Categoria categoriaSalva = categoriaService.atualizar(codigo,

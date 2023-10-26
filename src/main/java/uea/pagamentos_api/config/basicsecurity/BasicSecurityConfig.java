@@ -4,6 +4,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -16,11 +17,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import uea.pagamentos_api.config.PagamentosApiProperty;
+
 @Profile("basic-security")
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = false, securedEnabled = true, jsr250Enabled = true)
 public class BasicSecurityConfig {
+	
+	@Autowired
+	private PagamentosApiProperty pagamentosApiProperty;
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,7 +59,7 @@ public class BasicSecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 	    CorsConfiguration configuration = new CorsConfiguration();
-	    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+	    configuration.setAllowedOrigins(pagamentosApiProperty.getOriginPermitida());//Arrays.asList("*")
 	    configuration.setAllowedMethods(Arrays.asList("*"));
 	    configuration.setAllowedHeaders(Arrays.asList("*"));
 	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
